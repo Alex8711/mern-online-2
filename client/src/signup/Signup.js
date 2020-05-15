@@ -24,6 +24,7 @@ import Input from "../shared/components/Input";
 import { useForm } from "../shared/hooks/form-hook";
 import { AuthContext } from "../shared/context/auth-context";
 import cx from "classnames";
+import axios from "axios";
 import styles from "./Signup.module.css";
 
 const Signup = () => {
@@ -46,9 +47,22 @@ const Signup = () => {
     false
   );
 
-  const handleSubmitForm = (event) => {
+  const handleSubmitForm = async (event) => {
     event.preventDefault();
-    console.log(formState.inputs);
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/auth/register",
+        {
+          name: formState.inputs.name.value,
+          email: formState.inputs.email.value,
+          password: formState.inputs.password.value,
+        }
+      );
+      console.log(response.data);
+    } catch (error) {
+      console.log(error.message);
+    }
+
     auth.login();
   };
   return (

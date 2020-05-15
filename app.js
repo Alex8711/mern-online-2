@@ -2,7 +2,7 @@ const express = require("express");
 
 const mongoose = require("mongoose");
 const userRoute = require("./api/auth");
-const postRoute = require("./api/posts");
+const productRoute = require("./api/product");
 const dotenv = require("dotenv");
 
 const app = express();
@@ -22,7 +22,7 @@ app.use((req, res, next) => {
 });
 
 app.use("/api/auth/", userRoute);
-app.use("/api/post/", postRoute);
+app.use("/api/product/", productRoute);
 
 mongoose.connect(process.env.DB_SECRET, { useNewUrlParser: true }, () => {
   console.log("MongoDB is connected");

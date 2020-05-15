@@ -3,6 +3,7 @@ import { BrowserRouter, Switch, Route } from "react-router-dom";
 import Navbar from "./shared/components/Navbar";
 import Login from "./login/Login";
 import Signup from "./signup/Signup";
+import Upload from "./upload/Upload";
 import { AuthContext } from "./shared/context/auth-context";
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
             <Switch>
               <Route exact path="/login" component={Login} />
               <Route exact path="/signup" component={Signup} />
+              <Route exact path="/upload" component={Upload} />
             </Switch>
           </div>
         </div>

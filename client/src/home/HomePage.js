@@ -15,7 +15,7 @@ function HomePage(props) {
   useEffect(() => {
     const fetchProducts = async () => {
       const response = await axios.get(
-        "http://localhost:5000/api/product/getproducts"
+        "http://localhost:5000/api/product/getProducts"
       );
       setProducts(response.data.products);
     };
@@ -34,7 +34,7 @@ function HomePage(props) {
             {products.map((product) => (
               <Card
                 key={product._id}
-                style={{ width: "300px", height: "450px" }}
+                style={{ width: "300px", height: "550px" }}
                 onClick={() => {
                   props.history.push(`/product/${product._id}`);
                 }}
@@ -55,7 +55,7 @@ function HomePage(props) {
                 </CardActionArea>
                 <CardContent>
                   <Typography style={{ fontSize: "40px", textAlign: "center" }}>
-                    $ {product.description}
+                    {product.description}
                   </Typography>
                   <Typography style={{ fontSize: "40px", textAlign: "center" }}>
                     $ {product.price}

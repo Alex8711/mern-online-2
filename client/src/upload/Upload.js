@@ -1,30 +1,10 @@
-import React, { useState, useContext } from "react";
-import { Link } from "react-router-dom";
-import {
-  FormControl,
-  InputLabel,
-  Button,
-  Paper,
-  Grid,
-  Container,
-  CssBaseline,
-  Avatar,
-  Typography,
-  TextField,
-  FormControlLabel,
-  Box,
-  Card,
-} from "@material-ui/core";
-import {
-  VALIDATOR_EMAIL,
-  VALIDATOR_MINLENGTH,
-  VALIDATOR_REQUIRE,
-} from "../shared/util/validators";
+import React, { useContext } from "react";
+import { Button, Grid } from "@material-ui/core";
+import { VALIDATOR_MINLENGTH } from "../shared/util/validators";
 import Input from "../shared/components/Input";
 import { useForm } from "../shared/hooks/form-hook";
 import { AuthContext } from "../shared/context/auth-context";
 import ImageUpload from "../shared/components/ImageUpload";
-import cx from "classnames";
 import axios from "axios";
 
 const Upload = () => {

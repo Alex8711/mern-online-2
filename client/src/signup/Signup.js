@@ -1,20 +1,5 @@
-import React, { useState, useContext } from "react";
-import { Link } from "react-router-dom";
-import {
-  FormControl,
-  InputLabel,
-  Button,
-  Paper,
-  Grid,
-  Container,
-  CssBaseline,
-  Avatar,
-  Typography,
-  TextField,
-  FormControlLabel,
-  Box,
-  Card,
-} from "@material-ui/core";
+import React, { useContext } from "react";
+import { Button, Grid, Card } from "@material-ui/core";
 import {
   VALIDATOR_EMAIL,
   VALIDATOR_MINLENGTH,
@@ -23,11 +8,11 @@ import {
 import Input from "../shared/components/Input";
 import { useForm } from "../shared/hooks/form-hook";
 import { AuthContext } from "../shared/context/auth-context";
-import cx from "classnames";
 import axios from "axios";
+import { withRouter } from "react-router-dom";
 import styles from "./Signup.module.css";
 
-const Signup = () => {
+const Signup = (props) => {
   const auth = useContext(AuthContext);
   const [formState, inputHandler, setFormData] = useForm(
     {
@@ -49,21 +34,20 @@ const Signup = () => {
 
   const handleSubmitForm = async (event) => {
     event.preventDefault();
+    let response;
     try {
-      const response = await axios.post(
-        "http://localhost:5000/api/auth/register",
-        {
-          name: formState.inputs.name.value,
-          email: formState.inputs.email.value,
-          password: formState.inputs.password.value,
-        }
-      );
+      response = await axios.post("http://localhost:5000/api/auth/register", {
+        name: formState.inputs.name.value,
+        email: formState.inputs.email.value,
+        password: formState.inputs.password.value,
+      });
       console.log(response.data);
+      props.history.push("/");
     } catch (error) {
       console.log(error.message);
     }
 
-    auth.login();
+    auth.login(response.data.user._id, response.data.token, response.data.user);
   };
   return (
     <Grid container spacing={0} justify="center" className={styles.container}>
@@ -110,4 +94,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export default withRouter(Signup);

@@ -1,5 +1,5 @@
 const express = require("express");
-
+const path = require("path");
 const mongoose = require("mongoose");
 const userRoute = require("./api/auth");
 const productRoute = require("./api/product");
@@ -11,6 +11,7 @@ dotenv.config();
 
 app.use(express.json());
 
+app.use("/uploads/images", express.static(path.join("uploads", "images")));
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(

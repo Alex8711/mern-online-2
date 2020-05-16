@@ -4,6 +4,8 @@ import Navbar from "./shared/components/Navbar";
 import Login from "./login/Login";
 import Signup from "./signup/Signup";
 import Upload from "./upload/Upload";
+import HomePage from "./home/HomePage";
+import ProductDetail from "./productDetail/ProductDetail";
 import { AuthContext } from "./shared/context/auth-context";
 
 function App() {
@@ -23,9 +25,15 @@ function App() {
           <Navbar />
           <div>
             <Switch>
+              <Route exact path="/" component={HomePage} />
               <Route exact path="/login" component={Login} />
               <Route exact path="/signup" component={Signup} />
               <Route exact path="/upload" component={Upload} />
+              <Route
+                exact
+                path="/product/:productId"
+                component={ProductDetail}
+              />
             </Switch>
           </div>
         </div>

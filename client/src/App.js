@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import Navbar from "./shared/components/Navbar";
 import Login from "./login/Login";
@@ -12,17 +12,29 @@ import { AuthContext } from "./shared/context/auth-context";
 function App() {
   const [token, setToken] = useState(null);
   const [userId, setUserId] = useState(null);
-  const [user, setUser] = useState(null);
-  const login = useCallback((uid, token, user) => {
+
+  const login = useCallback((uid, token) => {
     setToken(token);
     setUserId(uid);
-    setUser(user);
+
+    localStorage.setItem(
+      "userData",
+      JSON.stringify({ userId: uid, token: token })
+    );
   }, []);
   const logout = useCallback(() => {
     setToken(null);
     setUserId(null);
-    setUser(null);
+
+    localStorage.removeItem("userData");
   }, []);
+
+  useEffect(() => {
+    const storeData = JSON.parse(localStorage.getItem("userData"));
+    if (storeData && storeData.token) {
+      login(storeData.userId, storeData.token);
+    }
+  }, [login]);
 
   return (
     <AuthContext.Provider
@@ -30,7 +42,6 @@ function App() {
         isLoggedIn: !!token,
         token: token,
         userId: userId,
-        user: user,
         login: login,
         logout: logout,
       }}
@@ -38,7 +49,7 @@ function App() {
       <BrowserRouter>
         <div>
           <Navbar />
-          <div>
+          <div style={{ marginTop: "20px" }}>
             <Switch>
               <Route exact path="/" component={HomePage} />
               <Route exact path="/login" component={Login} />
@@ -49,7 +60,7 @@ function App() {
                 path="/product/:productId"
                 component={ProductDetail}
               />
-              <Route exact path="/:userId/cart" component={Cart} />
+              <Route exact path="/cart" component={Cart} />
             </Switch>
           </div>
         </div>

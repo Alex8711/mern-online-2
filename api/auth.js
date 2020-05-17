@@ -3,6 +3,7 @@ const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const Product = require("../models/Product");
 const { registerValidation, loginValidation } = require("../validation");
 
 router.get("/", (req, res) => {
@@ -61,6 +62,14 @@ router.post("/login", async (req, res) => {
   const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
   res.header("auth-token", token);
   res.json({ user: user, token: token });
+});
+
+//
+// get cart information of user
+router.get("/:uid/cart", async (req, res) => {
+  const userId = req.params.uid;
+  const result = await User.findOne({ _id: userId }).populate("cart.product");
+  res.json({ cart: result.cart });
 });
 
 module.exports = router;

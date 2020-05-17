@@ -41,7 +41,7 @@ const Login = (props) => {
     } catch (error) {
       console.log(error.message);
     }
-    auth.login(response.data.user._id, response.data.token, response.data.user);
+    auth.login(response.data.user._id, response.data.token);
   };
   return (
     <Grid container spacing={0} justify="center" className={styles.container}>

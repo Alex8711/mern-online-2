@@ -10,7 +10,23 @@ import axios from "axios";
 
 const Cart = () => {
   const auth = useContext(AuthContext);
+  const userId = auth.userId;
+  console.log(auth.userId);
   const [cart, setCart] = useState([]);
+  useEffect(() => {
+    // let response;
+    const fetchCart = async () => {
+      const response = await axios.get(
+        `http://localhost:5000/api/auth/${userId}/cart`,
+        {
+          headers: { Authorization: "Bearer " + auth.token },
+        }
+      );
+      console.log(response.data);
+      setCart(response.data.cart);
+    };
+    fetchCart();
+  }, []);
   return (
     <div>
       <Table>
@@ -20,7 +36,7 @@ const Cart = () => {
             <TableCell>Product Image</TableCell>
             <TableCell>Product Quantity</TableCell>
             <TableCell>Product Price</TableCell>
-            <TableCell></TableCell>
+            <TableCell>{userId}</TableCell>
           </TableRow>
         </TableHead>
         <TableBody></TableBody>

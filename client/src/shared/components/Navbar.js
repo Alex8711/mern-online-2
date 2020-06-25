@@ -53,7 +53,7 @@ const Navbar = () => {
                 </IconButton>
               )}
               {auth.isLoggedIn && (
-                <IconButton color="inherit" href="/cart">
+                <IconButton color="inherit" href={`/${auth.userId}/cart`}>
                   Cart
                 </IconButton>
               )}

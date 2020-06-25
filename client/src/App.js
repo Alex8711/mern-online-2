@@ -9,30 +9,53 @@ import ProductDetail from "./productDetail/ProductDetail";
 import Cart from "./cart/Cart";
 import { AuthContext } from "./shared/context/auth-context";
 
+let logoutTimer;
+
 function App() {
   const [token, setToken] = useState(null);
   const [userId, setUserId] = useState(null);
+  const [tokenExpirationDate, setTokenExpirationDate] = useState();
 
-  const login = useCallback((uid, token) => {
+  const login = useCallback((uid, token, expirationDate) => {
     setToken(token);
     setUserId(uid);
-
+    const tokenExpirationDate =
+      expirationDate || new Date(new Date().getTime() + 1000 * 60 * 60);
+    setTokenExpirationDate(tokenExpirationDate);
     localStorage.setItem(
       "userData",
-      JSON.stringify({ userId: uid, token: token })
+      JSON.stringify({
+        userId: uid,
+        token: token,
+        expiration: tokenExpirationDate.toISOString(),
+      })
     );
   }, []);
   const logout = useCallback(() => {
     setToken(null);
     setUserId(null);
-
+    setTokenExpirationDate(null);
     localStorage.removeItem("userData");
   }, []);
 
   useEffect(() => {
+    if (token && tokenExpirationDate) {
+      const remainingTime =
+        tokenExpirationDate.getTime() - new Date().getTime();
+      logoutTimer = setTimeout(logout, remainingTime);
+    } else {
+      clearTimeout(logoutTimer);
+    }
+  }, [token, logout, tokenExpirationDate]);
+
+  useEffect(() => {
     const storeData = JSON.parse(localStorage.getItem("userData"));
-    if (storeData && storeData.token) {
-      login(storeData.userId, storeData.token);
+    if (
+      storeData &&
+      storeData.token &&
+      new Date(storeData.expiration) > new Date()
+    ) {
+      login(storeData.userId, storeData.token, new Date(storeData.expiration));
     }
   }, [login]);
 
@@ -60,7 +83,7 @@ function App() {
                 path="/product/:productId"
                 component={ProductDetail}
               />
-              <Route exact path="/cart" component={Cart} />
+              <Route exact path="/:uid/cart" component={Cart} />
             </Switch>
           </div>
         </div>

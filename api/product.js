@@ -5,6 +5,7 @@ const auth = require("./verifyToken");
 const Product = require("../models/Product");
 const User = require("../models/User");
 const fileUpload = require("../middleware/file-upload");
+const mongoose = require("mongoose");
 
 router.post("/upload", fileUpload.single("image"), async (req, res) => {
   const { title, description, price } = req.body;
@@ -38,19 +39,21 @@ router.get("/:productId", async (req, res) => {
 
 // add a product to the cart
 router.post("/addToCart", auth, async (req, res) => {
-  const { productId, quantity } = req.body;
-  User.findOne({ _id: req.userData.userId }, (err, userInfo) => {
+  const { productAddId, quantity } = req.body;
+  await User.findOne({ _id: req.userData.userId }, (err, userInfo) => {
     let duplicate = false;
+    console.log(productAddId);
     userInfo.cart.forEach((cartInfo) => {
-      if (cartInfo.product === productId) {
+      if (cartInfo.product.toString() === productAddId) {
         duplicate = true;
       }
     });
+    console.log(duplicate);
     if (duplicate) {
-      User.findOneAndUpdate(
+      User.updateOne(
         {
           _id: req.userData.userId,
-          "cart.product": productId,
+          "cart.product": productAddId,
         },
         {
           $inc: {
@@ -61,19 +64,24 @@ router.post("/addToCart", auth, async (req, res) => {
           new: true,
         },
         (err, userInfo) => {
+          // User.findOneAndUpdate(
+          //   { _id: userInfo._id },
+          //   { $pull: { cart: { quantity: 0 } } },
+          //   { new: true }
+          // );
           if (err) return res.json({ success: false, err });
           res.status(200).json(userInfo.cart);
         }
       );
     } else {
-      User.findByIdAndUpdate(
+      User.updateOne(
         {
           _id: req.userData.userId,
         },
         {
           $push: {
             cart: {
-              product: productId,
+              product: productAddId,
               quantity: quantity,
             },
           },
@@ -88,6 +96,29 @@ router.post("/addToCart", auth, async (req, res) => {
       );
     }
   });
+  // await User.findOneAndUpdate(
+  //   { _id: req.userData.userId, "cart.quantity": 0 },
+  //   { $pull: { cart: { quantity: 0 } } },
+  //   { new: true },
+  //   (err, userInfo) => {
+  //     let cart = userInfo.cart;
+  //     return res.status(200).json({ cart });
+  //   }
+  // );
+});
+
+router.post("/removeFromCart", auth, (req, res) => {
+  const { productRemoveId } = req.body;
+  // const removeId = mongoose.Types.ObjectId(productRemoveId);
+  User.findOneAndUpdate(
+    { _id: req.userData.userId },
+    { $pull: { cart: { product: productRemoveId } } },
+    { new: true },
+    (err, userInfo) => {
+      let cart = userInfo.cart;
+      return res.status(200).json({ cart });
+    }
+  );
 });
 
 module.exports = router;

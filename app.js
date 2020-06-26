@@ -10,7 +10,7 @@ const app = express();
 dotenv.config();
 
 app.use(express.json());
-
+app.use(express.static(path.join(__dirname, "client", "build")));
 app.use("/uploads/images", express.static(path.join("uploads", "images")));
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -24,7 +24,6 @@ app.use((req, res, next) => {
 
 app.use("/api/auth/", userRoute);
 app.use("/api/product/", productRoute);
-app.use(express.static(path.join(__dirname, "client", "build")));
 
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "client", "build", "index.html"));

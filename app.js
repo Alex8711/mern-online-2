@@ -29,12 +29,15 @@ app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "client", "build", "index.html"));
 });
 
-mongoose.connect(process.env.DB_SECRET, { useNewUrlParser: true }, () => {
-  console.log("MongoDB is connected");
-});
+mongoose
+  .connect(process.env.DB_SECRET, { useNewUrlParser: true })
+  .then(() => {
+    console.log("MongoDB is connected");
+  })
+  .catch((err) => console.log(err));
 
 const port = process.env.PORT || 5000;
 
 app.listen(port, () => {
-  console.log("app is running on port 5000");
+  console.log(`app is running on port ${port}`);
 });
